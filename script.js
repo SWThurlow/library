@@ -1,5 +1,5 @@
 /*Array for books and retrieving html elements.*/
-let myLibrary = [];
+let myLibrary = [{title: 'Death and the Penguin', author: 'Andrey Kurkov', pageCount: 228, read: 'read', index: 0}];
 
 const newTitle = document.getElementById('title');
 const newAuthor = document.getElementById('author');
@@ -16,10 +16,18 @@ class Book {
         this.pageCount = pageCount;
         this.read = read;
         this.index;
-        this.displayed = false;
     }
     findIndex(){
         this.index = myLibrary.indexOf(this);
+    }
+    toggleRead() {
+        if(this.read === 'not read') {
+            this.read = 'read'
+        } else {
+            this.read = 'not read'
+        }
+        let thisBook = [...library.childNodes][this.index + 1]
+        thisBook.textContent = `You have ${myLibrary[book].read} this title.`;
     }
 }
 
@@ -36,19 +44,15 @@ function displayMyLibrary(book) {
     cover.setAttribute('class', 'book');
     cover.setAttribute('data-index', `${myLibrary.indexOf(book)}`)
     let title = document.createElement('h3');
-    title.setAttribute('class', 'bookTitle');
     title.textContent = book.title;
     cover.appendChild(title);
     let author = document.createElement('h3');
-    author.setAttribute('class', 'author');
     author.textContent = book.author;
     cover.appendChild(author);
     let pageCount = document.createElement('p');
-    pageCount.setAttribute('class', 'pages')
     pageCount.textContent = book.pageCount;
     cover.appendChild(pageCount);
     let unread = document.createElement('p');
-    unread.setAttribute('class', 'unread');
     unread.textContent = `You have ${book.read} this title.`;
     cover.appendChild(unread);
     let read =  document.createElement('button');
@@ -93,3 +97,5 @@ library.addEventListener('click', (e) => {
         toggleRead(e.target.parentNode.dataset.index, e.target.previousElementSibling);
     } else return
 });
+
+window.onload = myLibrary.forEach(book => displayMyLibrary(book));
