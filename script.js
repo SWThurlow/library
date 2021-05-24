@@ -1,5 +1,5 @@
 /*Array for books and retrieving html elements.*/
-let myLibrary = [{title: 'Death and the Penguin', author: 'Andrey Kurkov', pageCount: 228, read: 'read', index: 0}];
+let myLibrary = JSON.parse(localStorage.getItem('myLibrary')) || [];
 
 const newTitle = document.getElementById('title');
 const newAuthor = document.getElementById('author');
@@ -16,18 +16,18 @@ class Book {
         this.pageCount = pageCount;
         this.read = read;
         this.index;
-    }
-    findIndex(){
-        this.index = myLibrary.indexOf(this);
-    }
-    toggleRead() {
-        if(this.read === 'not read') {
-            this.read = 'read'
-        } else {
-            this.read = 'not read'
+        this.findIndex = () => {
+            this.index = myLibrary.indexOf(this);
+        };
+        this.toggleRead = (readStatus) => {
+            if(this.read === 'not read') {
+                this.read = 'read'
+            } else {
+                this.read = 'not read'
+            }
+        
+            readStatus.textContent = `You have ${this.read} this title.`;
         }
-        let thisBook = [...library.childNodes][this.index + 1]
-        thisBook.textContent = `You have ${myLibrary[book].read} this title.`;
     }
 }
 
@@ -36,13 +36,17 @@ function newBook() {
     const book = new Book(newTitle.value, newAuthor.value, pageCount.value, read.checked ? 'read' : 'not read');
     myLibrary.push(book);
     book.findIndex();
-    displayMyLibrary(book);
+    displayBook(book);
+    localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
+    newTitle.value = '';
+    newAuthor.value = '';
+    pageCount.value = '';
 }
 
-function displayMyLibrary(book) {
+function displayBook(book) {
     let cover = document.createElement('div');
     cover.setAttribute('class', 'book');
-    cover.setAttribute('data-index', `${myLibrary.indexOf(book)}`)
+    cover.setAttribute('data-index', `${book.index}`)
     let title = document.createElement('h3');
     title.textContent = book.title;
     cover.appendChild(title);
@@ -50,7 +54,7 @@ function displayMyLibrary(book) {
     author.textContent = book.author;
     cover.appendChild(author);
     let pageCount = document.createElement('p');
-    pageCount.textContent = book.pageCount;
+    pageCount.textContent = book.pageCount + ' pages long.';
     cover.appendChild(pageCount);
     let unread = document.createElement('p');
     unread.textContent = `You have ${book.read} this title.`;
@@ -74,16 +78,7 @@ function removeBook(book) {
     for(let i = 1; i < allBooks.length; i++){
         allBooks[i].dataset.index = i - 1;
     }
-}
-
-function toggleRead(book, read) {
-    if(myLibrary[book].read === 'not read') {
-        myLibrary[book].read = 'read'
-    } else {
-        myLibrary[book].read = 'not read'
-    }
-
-    read.textContent = `You have ${myLibrary[book].read} this title.`;
+    localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
 }
 
 /*Event listeners*/
@@ -91,11 +86,13 @@ addBook.addEventListener('click', (e) => {
     newBook(e);
 });
 library.addEventListener('click', (e) => {
+    let targetBook = myLibrary[e.target.parentNode.dataset.index];
     if(e.target.classList.contains('remove')){
         removeBook(e.target.parentNode);
     } else if(e.target.classList.contains('read')){
-        toggleRead(e.target.parentNode.dataset.index, e.target.previousElementSibling);
+        let readDisplay = e.target.previousElementSibling
+        targetBook.toggleRead(readDisplay);
     } else return
 });
 
-window.onload = myLibrary.forEach(book => displayMyLibrary(book));
+window.onload = myLibrary.forEach(book => displayBook(book));
