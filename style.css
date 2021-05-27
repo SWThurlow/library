@@ -38,6 +38,12 @@ h1 {
     transform: scale(1.03);
 }
 
+.additions .fieldsMessage {
+    text-align: center;
+    margin-top: 10px;
+    height: 16px;
+}
+
 .additions .toggleRead {
     display: block;
     height: 22px;

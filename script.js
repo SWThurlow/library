@@ -5,7 +5,8 @@ const newTitle = document.getElementById('title');
 const newAuthor = document.getElementById('author');
 const newPageCount = document.getElementById('pageCount');
 const newRead = document.getElementById('read');
-const addBook = document.getElementById('addBook')
+const addBook = document.getElementById('addBook');
+const fieldsMessage = document.querySelector('.fieldsMessage');
 const library = document.querySelector('.library');
 
 /*Book constructor.*/
@@ -33,6 +34,10 @@ class Book {
 
 /*Adding new books*/
 function newBook() {
+    if(newTitle.value === '' || newAuthor.value === '' || pageCount.value === '') {
+        fieldsMessage.textContent = 'Please fill in all fields.';
+        return
+    }
     const book = new Book(newTitle.value, newAuthor.value, pageCount.value, read.checked ? 'read' : 'not read');
     myLibrary.push(book);
     book.findIndex();
@@ -85,6 +90,7 @@ function removeBook(book) {
 addBook.addEventListener('click', (e) => {
     newBook(e);
 });
+
 library.addEventListener('click', (e) => {
     let targetBook = myLibrary[e.target.parentNode.dataset.index];
     if(e.target.classList.contains('remove')){
@@ -93,6 +99,13 @@ library.addEventListener('click', (e) => {
         let readDisplay = e.target.previousElementSibling
         targetBook.toggleRead(readDisplay);
     } else return
+});
+
+window.addEventListener('keyup', () => {
+    if(newTitle.value !== '' || newAuthor.value !== '' || pageCount.value !== '') {
+        fieldsMessage.textContent = '';
+        return
+    }
 });
 
 window.onload = myLibrary.forEach(book => displayBook(book));
