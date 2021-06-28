@@ -9,6 +9,9 @@ const addBook = document.getElementById('addBook');
 const fieldsMessage = document.querySelector('.fieldsMessage');
 const library = document.querySelector('.library');
 
+/*Set library min height so it doesn't disappear without any books.*/
+library.style.cssText = `min-height: calc(100vh - ${library.offsetTop}px)`;
+
 /*Book constructor.*/
 class Book {
     constructor(title, author, pageCount, read) {
@@ -17,9 +20,6 @@ class Book {
         this.pageCount = pageCount;
         this.read = read;
         this.index;
-        this.findIndex = () => {
-            this.index = myLibrary.indexOf(this);
-        };
         this.toggleRead = (readStatus) => {
             if(this.read === 'not read') {
                 this.read = 'read'
@@ -29,6 +29,10 @@ class Book {
         
             readStatus.textContent = `You have ${this.read} this title.`;
         }
+    }
+
+    findIndex() {
+        this.index = myLibrary.indexOf(this);
     }
 }
 
@@ -86,7 +90,7 @@ function removeBook(book) {
     localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
 }
 
-/*Event listeners*/
+/*Event listeners.*/
 addBook.addEventListener('click', (e) => {
     newBook(e);
 });
@@ -94,9 +98,9 @@ addBook.addEventListener('click', (e) => {
 library.addEventListener('click', (e) => {
     let targetBook = myLibrary[e.target.parentNode.dataset.index];
     if(e.target.classList.contains('remove')){
-        removeBook(e.target.parentNode);
+        targetBook.removeBook(e.target.parentNode);
     } else if(e.target.classList.contains('read')){
-        let readDisplay = e.target.previousElementSibling
+        let readDisplay = e.target.previousElementSibling;
         targetBook.toggleRead(readDisplay);
     } else return
 });
@@ -108,4 +112,6 @@ window.addEventListener('keyup', () => {
     }
 });
 
-window.onload = myLibrary.forEach(book => displayBook(book));
+window.onload = () => { 
+    myLibrary.forEach(title => displayBook(title));
+}
